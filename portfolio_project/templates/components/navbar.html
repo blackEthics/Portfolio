@@ -1,0 +1,36 @@
+{% load static %}
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="{% url 'home:index' %}" class="nav-logo">
+      <div class="logo-container">
+        <img src="{% static 'images/nav-bar-logo.png' %}" alt="BLACKETHICS Logo" class="navbar-logo">
+      </div>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="{% url 'home:index' %}#home">Home</a></li>
+      <li><a href="{% url 'home:index' %}#services">Services</a></li>
+      <li><a href="{% url 'home:index' %}#skills">Skills</a></li>
+      <li>
+        <a href="{% url 'home:index' %}#certifications">Certifications</a>
+      </li>
+      <li><a href="{% url 'home:index' %}#experience">Experience</a></li>
+      <li><a href="{% url 'home:index' %}#education">Education</a></li>
+      <li><a href="{% url 'home:index' %}#volunteering">Volunteering</a></li>
+      <li><a href="{% url 'home:index' %}#projects-preview">Projects</a></li>
+      <li><a href="{% url 'home:index' %}#research">Research</a></li>
+      <li><a href="{% url 'home:index' %}#writeups-preview">Writeups</a></li>
+      <li><a href="{% url 'home:index' %}#contact">Contact</a></li>
+    </ul>
+
+    <div style="display: flex; align-items: center; gap: 12px">
+      <div class="nav-live">
+        <div class="live-dot"></div>
+        LIVE
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>

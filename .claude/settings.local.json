@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Start-Sleep *)",
+      "Bash(dir /s /b \"C:\\\\Users\\\\black\\\\OneDrive\\\\Desktop\\\\Portfolio\\\\portfolio_project\\\\templates\\\\*.html\")",
+      "PowerShell(Start-Sleep -Seconds 4; Invoke-WebRequest -Uri \"http://127.0.0.1:8000/writeups/\" -UseBasicParsing | Select-Object StatusCode, @{N='Length';E={$_.Content.Length}})"
+    ]
+  }
+}

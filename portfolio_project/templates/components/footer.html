@@ -1,0 +1,14 @@
+{% load static %}
+<footer>
+  <p>
+    Built with <span>♥</span> by
+    {% if site_profile %}{{ site_profile.name }}{% else %}[Your Name]{% endif %}
+    &nbsp;·&nbsp;
+    <span>&lt;/&gt;</span> in
+    {% if site_profile %}{{ site_profile.footer_location }}{% else %}Dhaka{% endif %}
+    &nbsp;·&nbsp;
+    <span style="font-family:'JetBrains Mono',monospace;color:var(--muted);">
+      {% if site_profile %}{{ site_profile.footer_tagline }}{% else %}Stay curious. Stay ethical.{% endif %}
+    </span>
+  </p>
+</footer>

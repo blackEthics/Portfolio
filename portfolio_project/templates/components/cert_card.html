@@ -1,0 +1,32 @@
+{% comment %}
+Usage: {% include 'components/cert_card.html' with cert=cert %}
+{% endcomment %}
+<div class="cert-panel {% if forloop.first %}active{% endif %}" id="cert-{{ cert.pk }}">
+  <div class="cert-detail-top">
+    <div class="cert-img-placeholder">
+      {% if cert.cert_image %}
+        <img src="{{ cert.cert_image.url }}" alt="{{ cert.name }}" style="width:100%;height:100%;object-fit:contain;border-radius:4px;" />
+      {% else %}
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8b949e" stroke-width="1.5">
+          <rect x="4" y="3" width="16" height="18" rx="2"/>
+          <path d="M8 7h8M8 11h8M8 15h5"/>
+        </svg>
+        Certificate Image
+      {% endif %}
+    </div>
+    <div class="cert-info">
+      <h3>{{ cert.name }}</h3>
+      <p class="cert-info-label">Certification Info</p>
+      <table class="cert-table">
+        <tr><td>Category</td><td>{{ cert.category }}</td></tr>
+        <tr><td>Issuer</td><td>{{ cert.issuer }}</td></tr>
+        <tr><td>Issued</td><td>{{ cert.issue_date }}</td></tr>
+        <tr><td>Status</td><td><span style="color:{{ cert.status_color }}">{{ cert.get_status_display }}</span></td></tr>
+        {% if cert.credential_url %}
+        <tr><td>Verify</td><td><a href="{{ cert.credential_url }}" target="_blank" rel="noopener" style="color:var(--red);">View Credential ↗</a></td></tr>
+        {% endif %}
+      </table>
+    </div>
+  </div>
+  <p class="cert-desc">{{ cert.description }}</p>
+</div>

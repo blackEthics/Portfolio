@@ -1,0 +1,20 @@
+{% comment %}
+Generic timeline item for experience / education entries.
+Pass: icon, title, subtitle, meta, description, tags
+{% endcomment %}
+<div class="timeline-item fade-in">
+  <div class="timeline-icon">{{ icon }}</div>
+  <div class="timeline-body">
+    <h3>{{ title }}</h3>
+    {% if subtitle %}<p class="timeline-subtitle">{{ subtitle }}</p>{% endif %}
+    {% if meta %}<p class="timeline-meta">{{ meta }}</p>{% endif %}
+    {% if description %}<p class="timeline-desc">{{ description }}</p>{% endif %}
+    {% if tags %}
+    <div class="tags-wrap">
+      {% for tag in tags %}
+      <span class="tag">{{ tag }}</span>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</div>

@@ -1,0 +1,447 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Research &amp; Publications{% if site_profile %} | {{ site_profile.name }}{% endif %}{% endblock %}
+{% block meta_description %}Peer-reviewed papers, academic publications, and research contributions in cybersecurity and emerging technologies.{% endblock %}
+
+{% block content %}
+
+<!-- ══════════════════════════════════
+     PAGE HEADER
+══════════════════════════════════ -->
+<section class="rp-list-header">
+  <div class="section-wrap">
+    <a href="{% url 'home:index' %}" class="back-link fade-in">← back to portfolio</a>
+
+    <div class="rp-list-top fade-in">
+      <div class="rp-list-title-wrap">
+        <div class="wu-breadcrumb"><span class="wu-prompt">&gt;_</span> ~/research/publications</div>
+        <h1 class="rp-list-title">Research &amp; <span>Publications</span></h1>
+        <p class="rp-list-sub">
+          Peer-reviewed academic papers, conference proceedings, and journal articles
+          spanning cybersecurity, post-quantum cryptography, and AI-driven threat analysis.
+        </p>
+        <div class="rp-stats-row">
+          <span class="rp-stat"><span class="rp-stat-num">{{ total_count }}</span> Papers</span>
+          <span class="rp-stat-sep">|</span>
+          <span class="rp-stat"><span class="rp-stat-num">{{ all_tags|length }}</span> Research Domains</span>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <form action="{% url 'research:list' %}" method="get" class="wu-search-form">
+        {% if active_tag %}<input type="hidden" name="tag" value="{{ active_tag.name }}" />{% endif %}
+        <div class="wu-search-box">
+          <svg class="wu-search-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input
+            type="search"
+            name="q"
+            placeholder="Search by title, author, venue..."
+            value="{{ search_q }}"
+            class="wu-search-input"
+            autocomplete="off"
+          />
+          {% if search_q %}<a href="{% url 'research:list' %}" class="wu-search-clear">✕</a>{% endif %}
+        </div>
+      </form>
+    </div>
+
+    <!-- Domain tag filter -->
+    {% if all_tags %}
+    <div class="wu-tag-filter fade-in">
+      <span class="wu-filter-label">Domain:</span>
+      <a href="{% url 'research:list' %}{% if search_q %}?q={{ search_q }}{% endif %}"
+         class="pill {% if not active_tag %}pill-red{% else %}pill-gray{% endif %}">All</a>
+      {% for tag in all_tags %}
+      <a href="{% url 'research:list' %}?tag={{ tag.name }}{% if search_q %}&q={{ search_q }}{% endif %}"
+         class="pill {% if active_tag.pk == tag.pk %}pill-{{ tag.color }}{% else %}pill-gray{% endif %}">
+        {{ tag.name }}
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     HIGHLIGHTED PAPERS
+══════════════════════════════════ -->
+{% if highlighted %}
+<section class="rp-highlight-section">
+  <div class="section-wrap">
+    <div class="wu-section-label">// HIGHLIGHTED PUBLICATIONS</div>
+    <div class="rp-pub-list">
+      {% for paper in highlighted %}
+      <article class="rp-pub-card rp-pub-card--featured fade-in" style="transition-delay:{{ forloop.counter0 }}00ms;">
+
+        <!-- Visual panel -->
+        <div class="rp-pub-visual">
+          {% if paper.certificate_image %}
+          <img
+            src="{{ paper.certificate_image.url }}"
+            alt="Certificate — {{ paper.title }}"
+            class="rp-pub-cert-img rp-cert-trigger"
+            data-cert-src="{{ paper.certificate_image.url }}"
+            data-cert-title="{{ paper.title }}"
+            title="Click to enlarge"
+          />
+          <div class="rp-cert-zoom-hint" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+            </svg>
+            Enlarge
+          </div>
+          {% else %}
+          <div class="rp-pub-cert-placeholder">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+              <circle cx="12" cy="8" r="5"/><path d="M9 21v-4a3 3 0 0 1 6 0v4"/><path d="M5 21h14"/>
+            </svg>
+            <span>CERTIFICATE</span>
+          </div>
+          {% endif %}
+          <div class="rp-pub-venue-badge">{{ paper.venue|truncatechars:32 }}</div>
+        </div>
+
+        <!-- Info panel -->
+        <div class="rp-pub-info">
+          <div class="rp-pub-index">PAPER #{{ forloop.counter }} &nbsp;·&nbsp; {{ paper.published_at|date:"Y" }}</div>
+          <h2 class="rp-pub-title">{{ paper.title }}</h2>
+          <p class="rp-pub-authors">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            {{ paper.authors }}
+          </p>
+          <p class="rp-pub-meta">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+            {{ paper.venue }} &nbsp;·&nbsp; {{ paper.published_at|date:"F Y" }}
+          </p>
+          <p class="rp-pub-abstract rp-pub-abstract--long">{{ paper.abstract|truncatechars:400 }}</p>
+
+          {% if paper.tags.exists %}
+          <div class="tags-wrap rp-pub-tags">
+            {% for tag in paper.tags.all %}
+            <span class="pill pill-{{ tag.color }}">{{ tag.name }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          {% if paper.publication_url %}
+          <a href="{{ paper.publication_url }}" target="_blank" rel="noopener noreferrer" class="rp-read-btn">
+            Read Full Paper
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+          </a>
+          {% endif %}
+        </div>
+
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ══════════════════════════════════
+     ALL PUBLICATIONS — 2-COLUMN GRID
+══════════════════════════════════ -->
+<section class="rp-all-section">
+  <div class="section-wrap">
+
+    {% if papers %}
+    <div class="wu-section-label">
+      // {% if search_q %}RESULTS FOR "{{ search_q|upper }}"{% elif active_tag %}DOMAIN: {{ active_tag.name|upper }}{% else %}ALL PUBLICATIONS{% endif %}
+      <span class="wu-count">({{ papers|length }})</span>
+    </div>
+
+    <div class="rp-grid">
+      {% for paper in papers %}
+      <article class="rp-pub-card fade-in" style="transition-delay:{{ forloop.counter0 }}0ms;">
+
+        <!-- Visual panel -->
+        <div class="rp-pub-visual">
+          {% if paper.certificate_image %}
+          <img
+            src="{{ paper.certificate_image.url }}"
+            alt="Certificate — {{ paper.title }}"
+            class="rp-pub-cert-img rp-cert-trigger"
+            data-cert-src="{{ paper.certificate_image.url }}"
+            data-cert-title="{{ paper.title }}"
+            title="Click to enlarge"
+          />
+          <div class="rp-cert-zoom-hint" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+            </svg>
+            Enlarge
+          </div>
+          {% else %}
+          <div class="rp-pub-cert-placeholder">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+              <circle cx="12" cy="8" r="5"/><path d="M9 21v-4a3 3 0 0 1 6 0v4"/><path d="M5 21h14"/>
+            </svg>
+            <span>CERTIFICATE</span>
+          </div>
+          {% endif %}
+          <div class="rp-pub-venue-badge">{{ paper.venue|truncatechars:26 }}</div>
+        </div>
+
+        <!-- Info panel -->
+        <div class="rp-pub-info">
+          <div class="rp-pub-index">PAPER #{{ forloop.counter }} &nbsp;·&nbsp; {{ paper.published_at|date:"Y" }}</div>
+          <h3 class="rp-pub-title">{{ paper.title }}</h3>
+          <p class="rp-pub-authors">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+            </svg>
+            {{ paper.authors }}
+          </p>
+          <p class="rp-pub-meta">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+            {{ paper.venue|truncatechars:40 }} &nbsp;·&nbsp; {{ paper.published_at|date:"M Y" }}
+          </p>
+          <p class="rp-pub-abstract">{{ paper.short_description }}</p>
+
+          {% if paper.tags.exists %}
+          <div class="tags-wrap rp-pub-tags">
+            {% for tag in paper.tags.all %}
+            <span class="pill pill-{{ tag.color }}">{{ tag.name }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          {% if paper.publication_url %}
+          <a href="{{ paper.publication_url }}" target="_blank" rel="noopener noreferrer" class="rp-read-btn rp-read-btn--outline">
+            Read Paper
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+          </a>
+          {% endif %}
+        </div>
+
+      </article>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="wu-empty-state fade-in">
+      <div class="wu-empty-code">&gt;_</div>
+      <p class="wu-empty-title">No publications found</p>
+      <p class="wu-empty-sub" style="color: var(--muted);">
+        {% if search_q %}No results for "{{ search_q }}". {% endif %}Try a different search or clear the filters.
+      </p>
+      <a href="{% url 'research:list' %}" class="btn-hire" style="margin-top:1.5rem; display:inline-block;">Clear filters</a>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     CERTIFICATE LIGHTBOX
+══════════════════════════════════ -->
+<div id="rp-lightbox" class="rp-lightbox" aria-hidden="true" role="dialog" aria-label="Certificate viewer">
+  <div class="rp-lb-backdrop"></div>
+  <div class="rp-lb-shell">
+
+    <!-- Toolbar -->
+    <div class="rp-lb-toolbar">
+      <span class="rp-lb-title" id="rp-lb-title"></span>
+      <div class="rp-lb-controls">
+        <button class="rp-lb-btn" id="rp-lb-zoom-out" title="Zoom out (scroll down)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            <line x1="8" y1="11" x2="14" y2="11"/>
+          </svg>
+        </button>
+        <span class="rp-lb-zoom-label" id="rp-lb-zoom-level">100%</span>
+        <button class="rp-lb-btn" id="rp-lb-zoom-in" title="Zoom in (scroll up)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+          </svg>
+        </button>
+        <button class="rp-lb-btn rp-lb-btn--reset" id="rp-lb-reset" title="Reset zoom">1:1</button>
+        <div class="rp-lb-sep"></div>
+        <button class="rp-lb-btn rp-lb-btn--close" id="rp-lb-close" title="Close (Esc)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Image viewport -->
+    <div class="rp-lb-viewport" id="rp-lb-viewport">
+      <div class="rp-lb-img-wrap" id="rp-lb-img-wrap">
+        <img class="rp-lb-img" id="rp-lb-img" src="" alt="" draggable="false" />
+      </div>
+    </div>
+
+    <!-- Footer hint -->
+    <div class="rp-lb-footer">
+      Scroll to zoom &nbsp;·&nbsp; Drag to pan &nbsp;·&nbsp; <kbd>Esc</kbd> to close
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  /* ── elements ── */
+  var lb        = document.getElementById('rp-lightbox');
+  var backdrop  = lb.querySelector('.rp-lb-backdrop');
+  var lbImg     = document.getElementById('rp-lb-img');
+  var lbTitle   = document.getElementById('rp-lb-title');
+  var lbVP      = document.getElementById('rp-lb-viewport');
+  var lbWrap    = document.getElementById('rp-lb-img-wrap');
+  var btnZoomIn = document.getElementById('rp-lb-zoom-in');
+  var btnZoomOut= document.getElementById('rp-lb-zoom-out');
+  var btnReset  = document.getElementById('rp-lb-reset');
+  var btnClose  = document.getElementById('rp-lb-close');
+  var lblZoom   = document.getElementById('rp-lb-zoom-level');
+
+  /* ── zoom state ── */
+  var scale = 1;
+  var STEP  = 0.25;
+  var MIN   = 0.5;
+  var MAX   = 4;
+
+  /* ── pan state ── */
+  var panX = 0, panY = 0;
+  var dragging = false, startX, startY, originX, originY;
+
+  function applyTransform() {
+    lbImg.style.transform = 'scale(' + scale + ') translate(' + panX / scale + 'px, ' + panY / scale + 'px)';
+    lblZoom.textContent = Math.round(scale * 100) + '%';
+  }
+
+  function resetView() {
+    scale = 1; panX = 0; panY = 0;
+    applyTransform();
+  }
+
+  function zoomBy(delta, cx, cy) {
+    var prev = scale;
+    scale = Math.min(MAX, Math.max(MIN, scale + delta));
+    if (cx !== undefined) {
+      var ratio = scale / prev;
+      panX = cx + (panX - cx) * ratio;
+      panY = cy + (panY - cy) * ratio;
+    }
+    applyTransform();
+  }
+
+  /* ── open / close ── */
+  function open(src, title) {
+    resetView();
+    lbImg.src = src;
+    lbImg.alt = title || '';
+    lbTitle.textContent = title || '';
+    lb.classList.add('rp-lb-active');
+    lb.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function close() {
+    lb.classList.remove('rp-lb-active');
+    lb.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    setTimeout(function() { lbImg.src = ''; }, 300);
+  }
+
+  /* ── triggers ── */
+  document.querySelectorAll('.rp-cert-trigger').forEach(function(el) {
+    el.addEventListener('click', function() {
+      open(this.dataset.certSrc, this.dataset.certTitle);
+    });
+  });
+
+  /* ── controls ── */
+  btnZoomIn.addEventListener('click', function() { zoomBy(STEP); });
+  btnZoomOut.addEventListener('click', function() { zoomBy(-STEP); });
+  btnReset.addEventListener('click', resetView);
+  btnClose.addEventListener('click', close);
+  backdrop.addEventListener('click', close);
+
+  document.addEventListener('keydown', function(e) {
+    if (!lb.classList.contains('rp-lb-active')) return;
+    if (e.key === 'Escape') close();
+    if (e.key === '+' || e.key === '=') zoomBy(STEP);
+    if (e.key === '-') zoomBy(-STEP);
+    if (e.key === '0') resetView();
+  });
+
+  /* ── wheel zoom (pivot at cursor) ── */
+  lbVP.addEventListener('wheel', function(e) {
+    e.preventDefault();
+    var rect = lbVP.getBoundingClientRect();
+    var cx = e.clientX - rect.left - rect.width  / 2;
+    var cy = e.clientY - rect.top  - rect.height / 2;
+    zoomBy(e.deltaY < 0 ? STEP : -STEP, cx, cy);
+  }, { passive: false });
+
+  /* ── drag to pan ── */
+  lbWrap.addEventListener('mousedown', function(e) {
+    if (scale <= 1) return;
+    dragging = true;
+    startX = e.clientX; startY = e.clientY;
+    originX = panX; originY = panY;
+    lbWrap.style.cursor = 'grabbing';
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', function(e) {
+    if (!dragging) return;
+    panX = originX + (e.clientX - startX);
+    panY = originY + (e.clientY - startY);
+    applyTransform();
+  });
+
+  document.addEventListener('mouseup', function() {
+    if (!dragging) return;
+    dragging = false;
+    lbWrap.style.cursor = scale > 1 ? 'grab' : 'default';
+  });
+
+  /* ── touch pinch-to-zoom ── */
+  var lastDist = null;
+  lbVP.addEventListener('touchstart', function(e) {
+    if (e.touches.length === 2) lastDist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+  }, { passive: true });
+
+  lbVP.addEventListener('touchmove', function(e) {
+    if (e.touches.length !== 2 || lastDist === null) return;
+    e.preventDefault();
+    var dist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+    var delta = (dist - lastDist) * 0.01;
+    lastDist = dist;
+    zoomBy(delta);
+  }, { passive: false });
+
+  lbVP.addEventListener('touchend', function() { lastDist = null; });
+})();
+</script>
+{% endblock %}

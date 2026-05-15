@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static writeup_filters %}
+
+{% block title %}{{ writeup.title }}{% if site_profile %} | {{ site_profile.name }}{% endif %}{% endblock %}
+{% block meta_description %}{{ writeup.excerpt }}{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<!-- Reading progress bar -->
+<div id="wu-progress" class="wu-progress-bar" role="progressbar" aria-label="Reading progress"></div>
+
+<div class="wu-detail-wrap">
+
+  <!-- Back link -->
+  <div class="section-wrap wu-detail-nav">
+    <a href="{% url 'writeups:list' %}" class="back-link fade-in">← All Writeups</a>
+  </div>
+
+  <!-- ── HERO BANNER ── -->
+  <div class="section-wrap wu-hero-section-wrap fade-in">
+    <div class="wu-detail-hero">
+
+      <!-- Background -->
+      <div class="wu-hero-bg">
+        {% if writeup.thumbnail %}
+        <img src="{{ writeup.thumbnail.url }}" alt="{{ writeup.title }}" class="wu-hero-img" />
+        {% endif %}
+        <div class="wu-hero-overlay"></div>
+      </div>
+
+      <!-- Content overlay -->
+      <div class="wu-hero-inner">
+        <div class="wu-hero-badges">
+          <span class="wu-cat-badge">{{ writeup.category_display }}</span>
+          <span class="wu-diff-badge wu-diff-{{ writeup.difficulty_level }}">{{ writeup.get_difficulty_level_display }}</span>
+          {% if writeup.is_featured %}<span class="wu-feat-badge">★ Featured</span>{% endif %}
+        </div>
+
+        <h1 class="wu-hero-title">{{ writeup.title }}</h1>
+        <p class="wu-hero-excerpt">{{ writeup.excerpt }}</p>
+
+        <div class="wu-hero-meta">
+          <span class="wu-hero-meta-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            {{ writeup.published_at|date:"F j, Y" }}
+          </span>
+          <span class="wu-hero-sep">·</span>
+          <span class="wu-hero-meta-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            {{ writeup.read_time_display }}
+          </span>
+        </div>
+
+        <div class="wu-hero-tags">
+          {% for tag in writeup.tags.all %}
+          <span class="pill pill-{{ tag.color }}">{{ tag.name }}</span>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CONTENT LAYOUT: TOC + ARTICLE ── -->
+  <div class="section-wrap wu-content-layout">
+
+    <!-- Sticky Table of Contents -->
+    <aside class="wu-toc" id="wu-toc">
+      <div class="wu-toc-header">
+        <span class="wu-toc-label">&gt;_ CONTENTS</span>
+      </div>
+      <nav id="wu-toc-nav">
+        <p class="wu-toc-loading">Generating...</p>
+      </nav>
+    </aside>
+
+    <!-- Main Article -->
+    <article class="wu-article">
+      {% if writeup.content %}
+      <div class="writeup-body" id="writeup-body">
+        {{ writeup.content|render_markdown }}
+      </div>
+      {% else %}
+      <div class="wu-no-content">
+        <div class="wu-no-content-icon">&gt;_</div>
+        <p>Full writeup content coming soon...</p>
+        <p class="wu-no-content-sub">Check back later or explore related writeups below.</p>
+      </div>
+      {% endif %}
+
+      <!-- Article footer -->
+      <div class="wu-article-footer">
+        <div class="wu-article-footer-tags">
+          {% for tag in writeup.tags.all %}
+          <a href="{% url 'writeups:list' %}?tag={{ tag.name }}" class="pill pill-{{ tag.color }}">{{ tag.name }}</a>
+          {% endfor %}
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <!-- ── PREV / NEXT NAVIGATION ── -->
+  <div class="section-wrap wu-prev-next">
+    {% if prev_writeup %}
+    <a href="{% url 'writeups:detail' prev_writeup.slug %}" class="wu-nav-card wu-nav-prev">
+      <span class="wu-nav-dir">← Older</span>
+      <span class="wu-nav-title">{{ prev_writeup.title }}</span>
+    </a>
+    {% else %}
+    <div></div>
+    {% endif %}
+
+    {% if next_writeup %}
+    <a href="{% url 'writeups:detail' next_writeup.slug %}" class="wu-nav-card wu-nav-next">
+      <span class="wu-nav-dir">Newer →</span>
+      <span class="wu-nav-title">{{ next_writeup.title }}</span>
+    </a>
+    {% endif %}
+  </div>
+
+  <!-- ── RELATED WRITEUPS ── -->
+  {% if related %}
+  <section class="section-wrap wu-related-section">
+    <div class="wu-section-label">// RELATED WRITEUPS</div>
+    <div class="wu-grid wu-related-grid">
+      {% for wu in related %}
+      <div class="wu-card fade-in" style="transition-delay:{{ forloop.counter0 }}00ms;">
+        <a href="{% url 'writeups:detail' wu.slug %}" class="wu-stretched-link" aria-label="{{ wu.title }}"></a>
+        <div class="wu-card-cover">
+          {% if wu.thumbnail %}
+          <img src="{{ wu.thumbnail.url }}" alt="{{ wu.title }}" loading="lazy" />
+          {% else %}
+          <div class="wu-card-gradient {% cycle 'wu-g2' 'wu-g4' 'wu-g1' %}">
+            <div class="wu-cover-ghost-text">
+              {% for line in wu.thumb_lines %}{{ line }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+            </div>
+          </div>
+          {% endif %}
+          <div class="wu-card-cover-badge">
+            <span class="wu-diff-badge wu-diff-{{ wu.difficulty_level }}">{{ wu.get_difficulty_level_display }}</span>
+          </div>
+        </div>
+        <div class="wu-card-body">
+          <div class="wu-card-tags">
+            {% for tag in wu.tags.all|slice:":3" %}
+            <span class="pill pill-{{ tag.color }}">{{ tag.name }}</span>
+            {% endfor %}
+          </div>
+          <h3 class="wu-card-title">{{ wu.title }}</h3>
+          <div class="wu-card-meta">
+            <span>{{ wu.published_at|date:"M j, Y" }}</span>
+            <span class="wu-dot-sep">·</span>
+            <span>{{ wu.read_time_display }}</span>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+</div><!-- end wu-detail-wrap -->
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/writeup_detail.js' %}"></script>
+{% endblock %}

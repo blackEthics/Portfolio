@@ -1,0 +1,5 @@
+{% comment %}
+Usage: {% include 'components/tag_pill.html' with tag=tag_object %}
+Expects `tag` with fields: name, color
+{% endcomment %}
+<span class="pill pill-{{ tag.color }}">{{ tag.name }}</span>

@@ -1,0 +1,105 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{% block title %}{% if site_profile %}{{ site_profile.name }} | Security Researcher{% else %}Security Researcher | Portfolio{% endif %}{% endblock %}</title>
+<meta name="description" content="{% block meta_description %}Penetration tester and security researcher portfolio.{% endblock %}" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="{% static 'css/custom.css' %}" />
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<!-- Background canvas: matrix rain + particles -->
+<canvas id="bg-canvas" aria-hidden="true"></canvas>
+
+<!-- Animated scan-line sweep -->
+<div class="bg-scanline" aria-hidden="true"></div>
+
+<!-- HUD corner brackets -->
+<div class="hud-br-tl" aria-hidden="true"></div>
+<div class="hud-br-tr" aria-hidden="true"></div>
+<div class="hud-br-bl" aria-hidden="true"></div>
+<div class="hud-br-br" aria-hidden="true"></div>
+
+{% include 'components/loading.html' %}
+
+<!-- Ghost scrolling text column -->
+<div class="ghost-col" aria-hidden="true">$ nmap -sV 192.168.1.0/24
+PORT   STATE SERVICE
+22/tcp open  ssh
+80/tcp open  http
+443/tcp open https
+$ sqlmap -u http://target/id=1
+[*] testing connection
+[*] checking stability
+Parameter: id (GET)
+Type: boolean-based blind
+$ msfconsole -q
+msf6 > use exploit/ms17_010
+msf6 > set RHOSTS 10.0.0.5
+msf6 > exploit
+[*] Meterpreter session 1
+$ gobuster dir -u target.com
+/admin     [200]
+/login     [200]
+/backup    [403]
+$ nikto -h target.com
++ Server: Apache/2.4.18
++ XSS: header not set
++ SQLi possible
+$ hydra -l admin -P rockyou.txt
+[22][ssh] host: 10.0.0.1
+login: admin pass: password123
+$ python3 reverse_shell.py
+Listening on 0.0.0.0:4444
+Connection received
+$ whoami
+root
+$ id
+uid=0(root) gid=0
+</div>
+
+{% include 'components/terminal_widget.html' %}
+{% include 'components/navbar.html' %}
+
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobile-menu">
+  <a href="{% url 'home:index' %}#home" class="mobile-link">Home</a>
+  <a href="{% url 'home:index' %}#services" class="mobile-link">Services</a>
+  <a href="{% url 'home:index' %}#skills" class="mobile-link">Skills</a>
+  <a href="{% url 'home:index' %}#certifications" class="mobile-link">Certifications</a>
+  <a href="{% url 'home:index' %}#experience" class="mobile-link">Experience</a>
+  <a href="{% url 'home:index' %}#education" class="mobile-link">Education</a>
+  <a href="{% url 'home:index' %}#volunteering" class="mobile-link">Volunteering</a>
+  <a href="{% url 'home:index' %}#projects-preview" class="mobile-link">Projects</a>
+  <a href="{% url 'writeups:list' %}" class="mobile-link">Writeups</a>
+  <a href="{% url 'home:index' %}#contact" class="mobile-link">Contact</a>
+</div>
+
+<main id="main-content">
+  {% if messages %}
+    {% for message in messages %}
+    <div class="flash-message flash-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+  {% block content %}{% endblock %}
+</main>
+
+{% include 'components/footer.html' %}
+
+<button id="back-top" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script src="{% static 'js/main.js' %}"></script>
+<script src="{% static 'js/typing.js' %}"></script>
+<script src="{% static 'js/animations.js' %}"></script>
+<script src="{% static 'js/carousel.js' %}"></script>
+<script src="{% static 'js/background.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

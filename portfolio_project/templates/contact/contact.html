@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact{% if site_profile %} | {{ site_profile.name }}{% endif %}{% endblock %}
+
+{% block content %}
+<section style="padding: 5rem 0; min-height: calc(100vh - 64px);">
+  <div class="contact-wrap">
+    <a href="{% url 'home:index' %}" class="back-link fade-in">← back to portfolio</a>
+    <div class="contact-head fade-in">
+      <h2>Let's <span>Connect</span></h2>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-info fade-in">
+        {% if site_profile and site_profile.email %}
+        <div class="contact-item">
+          <div class="contact-item-icon">📧</div>
+          <div class="contact-item-body">
+            <p>Email</p><p>{{ site_profile.email }}</p>
+          </div>
+        </div>
+        {% endif %}
+        {% if site_profile and site_profile.phone %}
+        <div class="contact-item">
+          <div class="contact-item-icon">📞</div>
+          <div class="contact-item-body">
+            <p>Phone</p><p>{{ site_profile.phone }}</p>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      <div class="fade-in">
+        <form class="contact-form" method="POST">
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name *</label>
+              <input type="text" name="first_name" required maxlength="50" />
+            </div>
+            <div class="form-group">
+              <label>Last Name *</label>
+              <input type="text" name="last_name" required maxlength="50" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" name="email" required />
+          </div>
+          <div class="form-group">
+            <label>Subject *</label>
+            <input type="text" name="subject" required maxlength="200" />
+          </div>
+          <div class="form-group">
+            <label>Message *</label>
+            <textarea name="message" rows="5" required></textarea>
+          </div>
+          <button type="submit" class="btn-submit">📨 Send Message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

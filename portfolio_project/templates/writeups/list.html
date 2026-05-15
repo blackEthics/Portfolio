@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Writeups &amp; Research{% if site_profile %} | {{ site_profile.name }}{% endif %}{% endblock %}
+{% block meta_description %}CVE research, CTF writeups, bug bounty findings, and offensive security notes.{% endblock %}
+
+{% block content %}
+
+<!-- ── LIST HEADER ── -->
+<section class="wu-list-header">
+  <div class="section-wrap">
+    <a href="{% url 'home:index' %}" class="back-link fade-in">← back to portfolio</a>
+
+    <div class="wu-list-top fade-in">
+      <div class="wu-list-title-wrap">
+        <div class="wu-breadcrumb"><span class="wu-prompt">&gt;_</span> ~/writeups</div>
+        <h1 class="wu-list-title">Writeups &amp; <span>Research</span></h1>
+        <p class="wu-list-sub">CVE research, CTF walkthroughs, bug bounty disclosures, and notes from the trenches of offensive security.</p>
+      </div>
+
+      <!-- Search -->
+      <form action="{% url 'writeups:list' %}" method="get" class="wu-search-form">
+        {% if active_category %}<input type="hidden" name="category" value="{{ active_category }}" />{% endif %}
+        {% if active_tag %}<input type="hidden" name="tag" value="{{ active_tag.name }}" />{% endif %}
+        <div class="wu-search-box">
+          <svg class="wu-search-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="search" name="q" placeholder="Search writeups..." value="{{ search_q }}" class="wu-search-input" autocomplete="off" />
+          {% if search_q %}<a href="{% url 'writeups:list' %}" class="wu-search-clear">✕</a>{% endif %}
+        </div>
+      </form>
+    </div>
+
+    <!-- Category tabs -->
+    <div class="wu-cat-tabs fade-in">
+      <a href="{% url 'writeups:list' %}{% if search_q %}?q={{ search_q }}{% endif %}" class="wu-cat-tab{% if not active_category %} active{% endif %}">All</a>
+      {% for val, label in categories %}
+      <a href="{% url 'writeups:list' %}?category={{ val }}{% if search_q %}&q={{ search_q }}{% endif %}" class="wu-cat-tab{% if active_category == val %} active{% endif %}">{{ label }}</a>
+      {% endfor %}
+    </div>
+
+    <!-- Tag pills -->
+    {% if all_tags %}
+    <div class="wu-tag-filter fade-in">
+      <span class="wu-filter-label">Tags:</span>
+      <a href="{% url 'writeups:list' %}{% if active_category %}?category={{ active_category }}{% endif %}" class="pill {% if not active_tag %}pill-red{% else %}pill-gray{% endif %}">All</a>
+      {% for tag in all_tags %}
+      <a href="{% url 'writeups:list' %}?tag={{ tag.name }}{% if active_category %}&category={{ active_category }}{% endif %}" class="pill {% if active_tag.pk == tag.pk %}pill-{{ tag.color }}{% else %}pill-gray{% endif %}">{{ tag.name }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- ── FEATURED SECTION ── -->
+{% if featured %}
+<section class="wu-featured-section">
+  <div class="section-wrap">
+    <div class="wu-section-label">// FEATURED</div>
+    <div class="wu-featured-grid">
+      {% for wu in featured %}
+      <div class="wu-featured-card fade-in" style="transition-delay:{{ forloop.counter0 }}00ms;">
+        <a href="{% url 'writeups:detail' wu.slug %}" class="wu-stretched-link" aria-label="{{ wu.title }}"></a>
+        <div class="wu-featured-cover {% cycle 'wu-g1' 'wu-g2' 'wu-g3' %}">
+          {% if wu.thumbnail %}
+          <img src="{{ wu.thumbnail.url }}" alt="{{ wu.title }}" loading="lazy" />
+          {% else %}
+          <div class="wu-cover-ghost-text">
+            {% for line in wu.thumb_lines %}{{ line }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+          </div>
+          {% endif %}
+          <div class="wu-featured-overlay">
+            <div class="wu-featured-badges">
+              <span class="wu-cat-badge">{{ wu.category_display }}</span>
+              <span class="wu-diff-badge wu-diff-{{ wu.difficulty_level }}">{{ wu.get_difficulty_level_display }}</span>
+            </div>
+            <h3 class="wu-featured-title">{{ wu.title }}</h3>
+            <p class="wu-featured-excerpt">{{ wu.excerpt|truncatewords:16 }}</p>
+            <div class="wu-featured-footer">
+              <span class="wu-meta-sm">{{ wu.published_at|date:"M j, Y" }} · {{ wu.read_time_display }}</span>
+              <span class="wu-read-arrow">Read →</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ── ALL WRITEUPS GRID ── -->
+<section class="wu-all-section">
+  <div class="section-wrap">
+
+    {% if writeups %}
+    <div class="wu-section-label">
+      // {% if search_q %}RESULTS FOR "{{ search_q }}"{% elif active_tag %}TAG: {{ active_tag.name|upper }}{% elif active_category %}{{ active_category|upper|cut:'_' }}{% else %}ALL WRITEUPS{% endif %}
+      <span class="wu-count">({{ writeups|length }})</span>
+    </div>
+    <div class="wu-grid">
+      {% for wu in writeups %}
+      <div class="wu-card fade-in" style="transition-delay:{{ forloop.counter0 }}0ms;">
+        <a href="{% url 'writeups:detail' wu.slug %}" class="wu-stretched-link" aria-label="{{ wu.title }}"></a>
+
+        <!-- Cover -->
+        <div class="wu-card-cover">
+          {% if wu.thumbnail %}
+          <img src="{{ wu.thumbnail.url }}" alt="{{ wu.title }}" loading="lazy" />
+          {% else %}
+          <div class="wu-card-gradient {% cycle 'wu-g1' 'wu-g2' 'wu-g3' 'wu-g4' 'wu-g5' %}">
+            <div class="wu-cover-ghost-text">
+              {% for line in wu.thumb_lines %}{{ line }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+            </div>
+          </div>
+          {% endif %}
+          <div class="wu-card-cover-badge">
+            <span class="wu-diff-badge wu-diff-{{ wu.difficulty_level }}">{{ wu.get_difficulty_level_display }}</span>
+          </div>
+          {% if wu.is_featured %}
+          <div class="wu-featured-star" title="Featured">★</div>
+          {% endif %}
+        </div>
+
+        <!-- Body -->
+        <div class="wu-card-body">
+          <div class="wu-card-tags">
+            {% for tag in wu.tags.all|slice:":3" %}
+            <span class="pill pill-{{ tag.color }}">{{ tag.name }}</span>
+            {% endfor %}
+          </div>
+          <h3 class="wu-card-title">{{ wu.title }}</h3>
+          <p class="wu-card-excerpt">{{ wu.excerpt|truncatewords:16 }}</p>
+          <div class="wu-card-meta">
+            <span>{{ wu.published_at|date:"M j, Y" }}</span>
+            <span class="wu-dot-sep">·</span>
+            <span>{{ wu.read_time_display }}</span>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="wu-empty-state fade-in">
+      <div class="wu-empty-code">&gt;_</div>
+      <p class="wu-empty-title">No writeups found</p>
+      <p class="wu-empty-sub">
+        {% if search_q %}No results for "{{ search_q }}". {% endif %}Try a different search or clear the filters.
+      </p>
+      <a href="{% url 'writeups:list' %}" class="btn-hire" style="margin-top:1.5rem;display:inline-block;">Clear filters</a>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% endblock %}

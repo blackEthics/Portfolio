@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Projects{% if site_profile %} | {{ site_profile.name }}{% endif %}{% endblock %}
+{% block meta_description %}Cybersecurity projects including security tools, research, and open-source contributions — powered by GitHub.{% endblock %}
+
+{% block content %}
+<section class="proj-section">
+
+  <div class="section-wrap" style="padding-top: 4rem; padding-bottom: 5rem;">
+
+    <!-- Breadcrumb nav -->
+    <div style="margin-bottom: 2.5rem;">
+      <a href="{% url 'home:index' %}" class="back-link">← back to portfolio</a>
+      <div class="writeups-breadcrumb" style="margin-top: 0.5rem;">
+        <span style="color: var(--red);">&gt;_</span> ~/projects
+      </div>
+    </div>
+
+    <!-- ── Section Header ── -->
+    <div class="proj-page-header" style="animation: proj-fade-in 0.5s ease both;">
+      <div class="wu-section-label" style="margin-bottom: 1rem;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--red);">
+          <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+        </svg>
+        <span>// github-powered showcase</span>
+        <span class="wu-count">{{ total_count }} repositor{{ total_count|pluralize:"y,ies" }}</span>
+      </div>
+
+      <h1 class="proj-page-title">My <span>Projects</span></h1>
+      <p class="proj-page-subtitle">
+        Projects designed to simulate attacks, analyze weaknesses, and improve security posture.
+        From network scanners to ML-powered threat detection — built in the field, open for the community.
+      </p>
+    </div>
+
+    <!-- ── Controls: Search + Language filter ── -->
+    <div class="proj-controls" style="margin-bottom: 2.5rem; animation: proj-fade-in 0.5s 100ms ease both;">
+
+      <!-- Search box -->
+      <form method="get" action="{% url 'projects:list' %}" class="proj-search-form" role="search">
+        {% if active_lang %}<input type="hidden" name="lang" value="{{ active_lang }}">{% endif %}
+        <div class="proj-search-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--muted); flex-shrink: 0;">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input
+            type="text"
+            name="q"
+            value="{{ search_query }}"
+            placeholder="Search projects…"
+            class="proj-search-input"
+            autocomplete="off"
+            aria-label="Search projects"
+          >
+          {% if search_query %}
+          <a href="{% url 'projects:list' %}{% if active_lang %}?lang={{ active_lang }}{% endif %}" class="wu-search-clear" aria-label="Clear search">✕</a>
+          {% endif %}
+        </div>
+      </form>
+
+      <!-- Language filter tabs -->
+      {% if all_languages %}
+      <div class="proj-lang-tabs" role="tablist" aria-label="Filter by language">
+        <a href="{% url 'projects:list' %}{% if search_query %}?q={{ search_query }}{% endif %}"
+           class="proj-lang-tab {% if not active_lang %}active{% endif %}">All</a>
+        {% for lang in all_languages %}
+        <a href="{% url 'projects:list' %}?lang={{ lang }}{% if search_query %}&q={{ search_query }}{% endif %}"
+           class="proj-lang-tab {% if active_lang == lang %}active{% endif %}">{{ lang }}</a>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+    </div>
+
+    <!-- ── Projects Grid ── -->
+    {% if projects %}
+    <div class="proj-grid" id="projects-grid">
+      {% for project in projects %}
+      <article class="proj-card" aria-label="{{ project.name }}">
+
+        <!-- Animated gradient top border (shown on hover via CSS) -->
+        <div class="proj-card-accent" aria-hidden="true"></div>
+
+        <div class="proj-card-inner">
+
+          <!-- Header: GitHub icon + repo name -->
+          <div class="proj-card-header">
+            <span class="proj-card-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+              </svg>
+            </span>
+            <div class="proj-card-name-wrap">
+              <span class="proj-card-name">{{ project.name }}</span>
+              {% if project.is_dummy %}
+              <span class="proj-demo-badge" title="Placeholder — connect GitHub to show real repos">demo</span>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Description -->
+          <p class="proj-card-desc">
+            {% if project.description %}{{ project.description|truncatechars:130 }}{% else %}<em style="opacity:0.4;">No description.</em>{% endif %}
+          </p>
+
+          <!-- Topics / tags -->
+          {% if project.topics %}
+          <div class="proj-topics">
+            {% for topic in project.topics|slice:":4" %}
+            <span class="proj-topic-tag">{{ topic }}</span>
+            {% endfor %}
+            {% if project.topics|length > 4 %}
+            <span class="proj-topic-tag proj-topic-more">+{{ project.topics|length|add:"-4" }}</span>
+            {% endif %}
+          </div>
+          {% endif %}
+
+          <!-- Meta row: language + stars + forks -->
+          <div class="proj-card-meta">
+            <div class="proj-lang-item">
+              {% if project.language and project.language != 'Unknown' %}
+              <span class="proj-lang-dot" style="background: {{ project.language_color }}; box-shadow: 0 0 5px {{ project.language_color }}55;" aria-hidden="true"></span>
+              <span class="proj-lang-label">{{ project.language }}</span>
+              {% else %}
+              <span class="proj-lang-label" style="opacity:0.35;">—</span>
+              {% endif %}
+            </div>
+            <div class="proj-meta-stats">
+              <span class="proj-stat" title="{{ project.stars }} stars">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="#e3b341" aria-hidden="true">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+                {{ project.stars }}
+              </span>
+              {% if project.forks %}
+              <span class="proj-stat" title="{{ project.forks }} forks">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/>
+                  <path d="M18 9v2a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9"/><line x1="12" y1="12" x2="12" y2="15"/>
+                </svg>
+                {{ project.forks }}
+              </span>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Footer: View Code button + updated date -->
+          <div class="proj-card-footer">
+            {% if project.html_url and project.html_url != '#' %}
+            <a href="{{ project.html_url }}" target="_blank" rel="noopener noreferrer" class="proj-view-btn">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+              </svg>
+              View Code
+            </a>
+            {% else %}
+            <span class="proj-view-btn proj-view-btn--disabled">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              Private
+            </span>
+            {% endif %}
+            {% if project.updated_at %}
+            <span class="proj-updated-date">{{ project.updated_at }}</span>
+            {% endif %}
+          </div>
+
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <!-- ── Empty State ── -->
+    <div class="wu-empty-state">
+      <div class="wu-empty-code">&gt;_</div>
+      <p class="wu-empty-title">No projects found</p>
+      <p class="wu-empty-sub">
+        {% if search_query %}No repositories match "<strong>{{ search_query }}</strong>"
+        {% elif active_lang %}No <strong>{{ active_lang }}</strong> repositories found
+        {% else %}No projects available{% endif %}
+      </p>
+      {% if search_query or active_lang %}
+      <a href="{% url 'projects:list' %}" class="btn-view-all" style="margin-top: 1.5rem;">← Clear filters</a>
+      {% endif %}
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+{% endblock %}

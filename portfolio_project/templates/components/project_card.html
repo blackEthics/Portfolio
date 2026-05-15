@@ -1,0 +1,26 @@
+{% comment %}
+Usage: {% include 'components/project_card.html' with item=writeup_or_project url=url %}
+{% endcomment %}
+<div class="writeup-card fade-in">
+  <div class="writeup-thumb">
+    {% if item.thumbnail %}
+      <img src="{{ item.thumbnail.url }}" alt="{{ item.title }}" style="width:100%;height:100%;object-fit:cover;border-radius:6px;" />
+    {% else %}
+      {% for line in item.thumb_lines %}{{ line }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+    {% endif %}
+  </div>
+  <div class="writeup-content">
+    <div class="writeup-tags">
+      {% for tag in item.tags.all %}
+        {% include 'components/tag_pill.html' with tag=tag %}
+      {% endfor %}
+    </div>
+    <p class="writeup-title">
+      {% if url %}<a href="{{ url }}" style="color:inherit;text-decoration:none;">{{ item.title }}</a>{% else %}{{ item.title }}{% endif %}
+    </p>
+    <p class="writeup-excerpt">{{ item.excerpt }}</p>
+    {% if item.published_at %}
+    <p class="writeup-meta">{{ item.published_at|date:"M j, Y" }} &nbsp;·&nbsp; {{ item.read_time_display }}</p>
+    {% endif %}
+  </div>
+</div>
