@@ -2,7 +2,16 @@ from django.db import models
 
 
 class EducationTag(models.Model):
+    COLOR_CHOICES = [
+        ('red', 'Red'),
+        ('blue', 'Blue'),
+        ('green', 'Green'),
+        ('yellow', 'Yellow'),
+        ('purple', 'Purple'),
+        ('gray', 'Gray'),
+    ]
     name = models.CharField(max_length=80, unique=True)
+    color = models.CharField(max_length=10, choices=COLOR_CHOICES, default='blue')
 
     class Meta:
         ordering = ['name']
@@ -18,6 +27,8 @@ class Education(models.Model):
     end_year = models.CharField(max_length=10)
     grade = models.CharField(max_length=50, blank=True)
     icon_emoji = models.CharField(max_length=10, default='🎓')
+    location = models.CharField(max_length=200, blank=True)
+    university_url = models.URLField(blank=True)
     tags = models.ManyToManyField(EducationTag, blank=True, related_name='educations')
     order = models.PositiveIntegerField(default=0, db_index=True)
 

@@ -4,7 +4,8 @@ from .models import Service, ServiceTag
 
 @admin.register(ServiceTag)
 class ServiceTagAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'color')
+    list_editable = ('color',)
     search_fields = ('name',)
 
 

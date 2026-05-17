@@ -10,7 +10,8 @@ class SiteProfileAdmin(admin.ModelAdmin):
                        'profile_photo', 'profile_initials')
         }),
         ('Social Links', {
-            'fields': ('github_url', 'linkedin_url', 'tryhackme_url')
+            'fields': ('github_url', 'linkedin_url', 'tryhackme_url',
+                       'twitter_url', 'facebook_url', 'whatsapp_url')
         }),
         ('Contact Info', {
             'fields': ('email', 'phone', 'location', 'response_note')

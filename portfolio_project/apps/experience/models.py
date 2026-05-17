@@ -2,7 +2,16 @@ from django.db import models
 
 
 class ExperienceTag(models.Model):
+    COLOR_CHOICES = [
+        ('red', 'Red'),
+        ('blue', 'Blue'),
+        ('green', 'Green'),
+        ('yellow', 'Yellow'),
+        ('purple', 'Purple'),
+        ('gray', 'Gray'),
+    ]
     name = models.CharField(max_length=80, unique=True)
+    color = models.CharField(max_length=10, choices=COLOR_CHOICES, default='green')
 
     class Meta:
         ordering = ['name']

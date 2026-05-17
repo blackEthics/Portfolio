@@ -2,6 +2,14 @@ from django.db import models
 
 
 class VolunteeringOrganization(models.Model):
+    CATEGORY_CHOICES = [
+        ('tech', 'Tech & Innovation'),
+        ('social', 'Social Impact'),
+        ('academic', 'Academic'),
+        ('leadership', 'Club Leadership'),
+        ('other', 'Other'),
+    ]
+
     name = models.CharField(max_length=150)
     location = models.CharField(max_length=150, blank=True)
     logo_initials = models.CharField(
@@ -12,6 +20,13 @@ class VolunteeringOrganization(models.Model):
     total_duration = models.CharField(
         max_length=100, blank=True,
         help_text='e.g. "Jan 2023 – Present · 2 yrs"',
+    )
+    category = models.CharField(
+        max_length=20, choices=CATEGORY_CHOICES, default='other',
+    )
+    featured = models.BooleanField(
+        default=False,
+        help_text='Show this org on the homepage volunteering preview.',
     )
     order = models.PositiveIntegerField(default=0, db_index=True)
 

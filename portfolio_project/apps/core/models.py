@@ -1,5 +1,8 @@
 import json
 from django.db import models
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
+from django.core.cache import cache
 
 
 class SiteProfile(models.Model):
@@ -15,6 +18,9 @@ class SiteProfile(models.Model):
     github_url = models.URLField(blank=True)
     linkedin_url = models.URLField(blank=True)
     tryhackme_url = models.URLField(blank=True)
+    twitter_url = models.URLField(blank=True)
+    facebook_url = models.URLField(blank=True)
+    whatsapp_url = models.URLField(blank=True, help_text='Full wa.me link, e.g. https://wa.me/8801XXXXXXXXX')
     email = models.EmailField(blank=True)
     phone = models.CharField(max_length=30, blank=True)
     location = models.CharField(max_length=100, blank=True)
@@ -37,6 +43,12 @@ class SiteProfile(models.Model):
 
     def get_roles_json(self):
         return json.dumps(self.get_roles())
+
+
+@receiver(post_save, sender=SiteProfile)
+@receiver(post_delete, sender=SiteProfile)
+def _clear_site_profile_cache(sender, **kwargs):
+    cache.delete('core_site_profile')
 
 
 class ContactMessage(models.Model):

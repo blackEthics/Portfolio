@@ -2,7 +2,16 @@ from django.db import models
 
 
 class ServiceTag(models.Model):
+    COLOR_CHOICES = [
+        ('red', 'Red'),
+        ('blue', 'Blue'),
+        ('green', 'Green'),
+        ('yellow', 'Yellow'),
+        ('purple', 'Purple'),
+        ('gray', 'Gray'),
+    ]
     name = models.CharField(max_length=80, unique=True)
+    color = models.CharField(max_length=10, choices=COLOR_CHOICES, default='blue')
 
     class Meta:
         ordering = ['name']

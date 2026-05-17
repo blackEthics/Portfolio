@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Volunteering{% if site_profile %} | {{ site_profile.name }}{% endif %}{% endblock %}
+{% block meta_description %}Community leadership and technical contributions across {{ total_orgs }}+ organizations in tech, academic, and social impact domains.{% endblock %}
+
+{% block content %}
+
+<!-- ══════════════════════════════════
+     PAGE HEADER
+══════════════════════════════════ -->
+<section class="vol-list-header">
+  <div class="section-wrap">
+    <a href="{% url 'home:index' %}" class="back-link fade-in">← back to portfolio</a>
+
+    <div class="fade-in" style="margin-top: 1.5rem">
+      <div class="wu-breadcrumb"><span class="wu-prompt">&gt;_</span> ~/volunteering</div>
+      <h1 class="vol-list-title">My <span>Volunteering</span></h1>
+      <p class="vol-list-sub">
+        Community leadership and technical contributions that shaped my ability
+        to collaborate, communicate, and drive impact beyond the classroom.
+      </p>
+
+      <div class="rp-stats-row" style="margin-top: 1.25rem">
+        <span class="rp-stat"><span class="rp-stat-num">{{ total_orgs }}</span> Organizations</span>
+        <span class="rp-stat-sep">|</span>
+        <span class="rp-stat"><span class="rp-stat-num">{{ total_roles }}</span> Roles Held</span>
+        <span class="rp-stat-sep">|</span>
+        <span class="rp-stat" style="color: #3fb950">● Actively Contributing</span>
+      </div>
+    </div>
+
+    <!-- Terminal strip -->
+    <div class="sk-terminal-strip fade-in" style="transition-delay: 0.05s; margin-top: 2rem">
+      <span class="sk-ts-prompt">visitor@portfolio</span
+      ><span class="sk-ts-sep">:</span><span class="sk-ts-path">~/volunteering</span
+      ><span class="sk-ts-dollar">$&nbsp;</span
+      ><span class="sk-ts-cmd">list_orgs --all --roles{% if active_category %} --category={{ active_category }}{% endif %}</span>
+      <span class="sk-ts-divider">&nbsp;···&nbsp;</span>
+      <span class="sk-ts-ok">▸ {{ orgs|length }} org{{ orgs|length|pluralize }} loaded</span>
+      <span class="sk-ts-divider">&nbsp;//&nbsp;</span>
+      <span class="sk-ts-ok">▸ status: <span class="sk-ts-hi">CONTRIBUTING</span></span>
+    </div>
+
+    <!-- Category filter tabs -->
+    <div class="wu-cat-tabs fade-in" style="transition-delay: 0.08s; margin-top: 1.5rem">
+      <a href="{% url 'volunteering:list' %}" class="wu-cat-tab{% if not active_category %} active{% endif %}">All</a>
+      {% for val, label in categories %}
+      <a href="{% url 'volunteering:list' %}?category={{ val }}"
+         class="wu-cat-tab{% if active_category == val %} active{% endif %}">{{ label }}</a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     ORGANISATIONS GRID
+══════════════════════════════════ -->
+<section style="padding: 2rem 0 5rem">
+  <div class="section-wrap">
+    {% if orgs %}
+    <div class="vol-orgs-grid">
+      {% for org in orgs %}
+      <div class="vol-org-card fade-in" style="transition-delay: {{ forloop.counter0 }}0ms">
+
+        <!-- Organisation header -->
+        <div class="vol-org-header">
+          <div class="vol-org-logo">
+            {% if org.logo_image %}
+            <img src="{{ org.logo_image.url }}" alt="{{ org.name }}" />
+            {% else %}{{ org.logo_initials|default:org.name|slice:":3" }}{% endif %}
+          </div>
+          <div class="vol-org-info">
+            <h3>{{ org.name }}</h3>
+            {% if org.category %}
+            <span class="vol-org-category-badge vol-cat-{{ org.category }}">
+              {{ org.get_category_display }}
+            </span>
+            {% endif %}
+            {% if org.total_duration %}
+            <p class="vol-org-duration">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+              {{ org.total_duration }}
+            </p>
+            {% endif %}
+            {% if org.location %}
+            <p class="vol-org-location">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              {{ org.location }}
+            </p>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Role timeline -->
+        <div class="vol-timeline">
+          <div class="vol-timeline-line"></div>
+          {% for role in org.roles.all %}
+          <div class="vol-role">
+            <div class="vol-role-dot-wrap">
+              <div class="vol-role-dot{% if role.is_current %} vol-dot-current{% endif %}">
+                <div class="vol-dot-inner"></div>
+              </div>
+            </div>
+            <div class="vol-role-content">
+              <div class="vol-role-header">
+                <span class="vol-role-title">{{ role.title }}</span>
+                {% if role.is_current %}
+                <span class="vol-present-badge">&#9679; PRESENT</span>
+                {% endif %}
+              </div>
+              <p class="vol-role-meta">{{ role.period }}</p>
+              {% if role.description %}
+              <p class="vol-role-desc" id="vd-{{ role.pk }}">{{ role.description }}</p>
+              <button class="vol-show-more" data-target="vd-{{ role.pk }}">Show more ↓</button>
+              {% endif %}
+              {% if role.achievements %}
+              <ul class="vol-role-achievements">
+                {% for ach in role.get_achievements_list %}
+                <li>{{ ach }}</li>
+                {% endfor %}
+              </ul>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="vol-empty fade-in">
+      <p style="color: var(--muted); text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem">
+        {% if active_category %}
+        No organizations found in this category.
+        <a href="{% url 'volunteering:list' %}" style="color: var(--red)">Clear filter →</a>
+        {% else %}
+        No volunteering entries added yet.
+        {% endif %}
+      </p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Timeline dot entrance animations
+  (function () {
+    var dotObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('vol-dot-visible');
+          dotObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.vol-role-dot').forEach(function (d) {
+      dotObs.observe(d);
+    });
+
+    // Show-more / show-less description toggle
+    document.querySelectorAll('.vol-show-more').forEach(function (btn) {
+      var desc = document.getElementById(btn.dataset.target);
+      if (!desc) { btn.classList.add('vol-show-more-hidden'); return; }
+      if (desc.scrollHeight <= desc.clientHeight + 2) {
+        btn.classList.add('vol-show-more-hidden');
+        return;
+      }
+      btn.addEventListener('click', function () {
+        var expanded = desc.classList.toggle('vol-desc-expanded');
+        btn.textContent = expanded ? 'Show less ↑' : 'Show more ↓';
+      });
+    });
+  })();
+</script>
+{% endblock %}

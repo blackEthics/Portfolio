@@ -11,7 +11,7 @@ SECRET_KEY = os.environ.get(
     'django-insecure-portfolio-dev-key-change-in-production-abc123xyz'
 )
 
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost 127.0.0.1').split()
 

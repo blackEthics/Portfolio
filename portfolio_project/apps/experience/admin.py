@@ -4,7 +4,8 @@ from .models import Experience, Achievement, ExperienceTag
 
 @admin.register(ExperienceTag)
 class ExperienceTagAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'color')
+    list_editable = ('color',)
     search_fields = ('name',)
 
 

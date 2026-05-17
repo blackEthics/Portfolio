@@ -54,21 +54,21 @@ class Command(BaseCommand):
         data = [
             ('🛡️', 'Vulnerability Assessment',
              'Systematic process of identifying, analyzing, and prioritizing security weaknesses across your infrastructure.',
-             ['Reporting & Visualization', 'Automated Scanning', 'Vulnerability Classification', 'Risk Scoring']),
+             [('Reporting & Visualization', 'blue'), ('Automated Scanning', 'purple'), ('Vulnerability Classification', 'yellow'), ('Risk Scoring', 'red')]),
             ('🔍', 'Penetration Testing',
              'Ethical hacking services to identify and exploit vulnerabilities before malicious actors do.',
-             ['Web Application Testing', 'Network Penetration', 'Social Engineering', 'Wireless Security']),
+             [('Web Application Testing', 'red'), ('Network Penetration', 'blue'), ('Social Engineering', 'yellow'), ('Wireless Security', 'purple')]),
             ('🐛', 'Bug Bounty Hunting',
              'Professional vulnerability research and responsible disclosure on private and public programs.',
-             ['OWASP Top 10', 'Web Application Testing', 'API Security', 'Mobile App Testing']),
+             [('OWASP Top 10', 'red'), ('Web Application Testing', 'red'), ('API Security', 'blue'), ('Mobile App Testing', 'purple')]),
             ('</>', 'Scripts & Automation',
              'Python and Bash automation for security testing, log analysis, and task automation.',
-             ['Security Tool Integration', 'Automation', 'Recon & Pentesting Automation', 'Integration']),
+             [('Security Tool Integration', 'blue'), ('Automation', 'green'), ('Recon & Pentesting Automation', 'purple'), ('Integration', 'yellow')]),
         ]
         for i, (icon, title, desc, tags) in enumerate(data):
             svc = Service.objects.create(icon=icon, title=title, description=desc, order=i)
-            for tag_name in tags:
-                tag, _ = ServiceTag.objects.get_or_create(name=tag_name)
+            for tag_name, color in tags:
+                tag, _ = ServiceTag.objects.get_or_create(name=tag_name, defaults={'color': color})
                 svc.tags.add(tag)
         self.stdout.write('  [ok] Services created')
 
@@ -137,8 +137,10 @@ class Command(BaseCommand):
             'Mentored 2 junior security analysts in web application testing techniques.',
         ]:
             Achievement.objects.create(experience=exp1, text=text)
-        for name in ['Burp Suite Pro', 'Metasploit', 'Python', 'Nmap', 'AWS Security']:
+        for name, color in [('Burp Suite Pro', 'red'), ('Metasploit', 'red'),
+                             ('Python', 'blue'), ('Nmap', 'yellow'), ('AWS Security', 'purple')]:
             t, _ = ExperienceTag.objects.get_or_create(name=name)
+            t.color = color; t.save()
             exp1.tags.add(t)
 
         exp2 = Experience.objects.create(
@@ -155,8 +157,10 @@ class Command(BaseCommand):
             'Completed all internal CTF challenges, ranked 1st in the intern cohort.',
         ]:
             Achievement.objects.create(experience=exp2, text=text)
-        for name in ['Nmap', 'Wireshark', 'Bash Scripting', 'OWASP Testing Guide', 'Splunk']:
+        for name, color in [('Nmap', 'yellow'), ('Wireshark', 'blue'),
+                             ('Bash Scripting', 'green'), ('OWASP Testing Guide', 'red'), ('Splunk', 'purple')]:
             t, _ = ExperienceTag.objects.get_or_create(name=name)
+            t.color = color; t.save()
             exp2.tags.add(t)
         self.stdout.write('  [ok] Experience created')
 
@@ -171,8 +175,11 @@ class Command(BaseCommand):
             start_year='2021', end_year='2025', grade='CGPA: 3.72 / 4.00',
             icon_emoji='🎓', order=0,
         )
-        for name in ['Network Security', 'Cryptography', 'Operating Systems', 'Algorithms', 'Database Systems', 'Quantum Computing']:
+        for name, color in [('Network Security', 'red'), ('Cryptography', 'purple'),
+                             ('Operating Systems', 'green'), ('Algorithms', 'blue'),
+                             ('Database Systems', 'yellow'), ('Quantum Computing', 'purple')]:
             t, _ = EducationTag.objects.get_or_create(name=name)
+            t.color = color; t.save()
             edu1.tags.add(t)
         edu2 = Education.objects.create(
             degree='Higher Secondary Certificate (HSC) — Science',
@@ -180,8 +187,9 @@ class Command(BaseCommand):
             start_year='2019', end_year='2021', grade='GPA: 5.00 / 5.00',
             icon_emoji='🏫', order=1,
         )
-        for name in ['Physics', 'Mathematics', 'Chemistry']:
+        for name, color in [('Physics', 'blue'), ('Mathematics', 'yellow'), ('Chemistry', 'green')]:
             t, _ = EducationTag.objects.get_or_create(name=name)
+            t.color = color; t.save()
             edu2.tags.add(t)
         self.stdout.write('  [ok] Education created')
 
@@ -190,32 +198,51 @@ class Command(BaseCommand):
         if VolunteeringOrganization.objects.exists():
             self.stdout.write('  [skip] Volunteering already exists')
             return
-        org = VolunteeringOrganization.objects.create(
+
+        # ── Org 1: IEEE CS BDC Team SPARK ──
+        org1 = VolunteeringOrganization.objects.create(
             name='IEEE CS BDC Team SPARK', location='Dhaka, Bangladesh',
-            logo_initials='IEEE', total_duration='Jan 2023 – Present · 2+ yrs', order=0,
+            logo_initials='SPARK', total_duration='Jan 2023 – Present · 2+ yrs',
+            category='tech', featured=True, order=0,
         )
         VolunteeringRole.objects.create(
-            organization=org, title='Vice Chief', start_date='Jan 2025',
+            organization=org1, title='Vice Chief', start_date='Jan 2025',
             end_date='', is_current=True,
             description='Leading the SPARK team as Vice Chief, driving strategic planning and cross-functional collaboration.',
             achievements='Coordinated a 200+ attendee national CTF competition.\nGrew team membership by 35%.\nEstablished a weekly knowledge-sharing session.',
             order=0,
         )
         VolunteeringRole.objects.create(
-            organization=org, title='Vice Chief', start_date='Jan 2024',
+            organization=org1, title='Vice Chief', start_date='Jan 2024',
             end_date='Jan 2025', is_current=False,
             description='Served as Vice Chief overseeing day-to-day team operations and resource allocation.',
             achievements='Managed a 15-person core team through three concurrent project cycles.\nIntroduced a project tracking system that reduced missed deadlines by 40%.',
             order=1,
         )
         VolunteeringRole.objects.create(
-            organization=org, title='Event Coordinator', start_date='Jan 2023',
+            organization=org1, title='Event Coordinator', start_date='Jan 2023',
             end_date='Apr 2024', is_current=False,
             description='Planned and executed technical workshops, hackathons, and seminars for the student chapter.',
             achievements='Organised 6 technical workshops covering ethical hacking and CTF basics.\nSecured 3 industry sponsorships totalling $1,500.\nBuilt event registration portal used by 500+ participants.',
             order=2,
         )
-        self.stdout.write('  [ok] Volunteering created')
+
+        # ── Org 2: IEEE CS JnU Student Branch Chapter ──
+        org2 = VolunteeringOrganization.objects.create(
+            name='IEEE Computer Society Jagannath University Student Branch Chapter',
+            location='Dhaka, Bangladesh',
+            logo_initials='JnUCS', total_duration='Jun 2024 – Present · 1+ yr',
+            category='tech', featured=True, order=1,
+        )
+        VolunteeringRole.objects.create(
+            organization=org2, title='Executive Member', start_date='Jun 2024',
+            end_date='', is_current=True,
+            description='Serving as an Executive Member of the IEEE CS JnU Student Branch, organizing technical events and driving community engagement for computing students.',
+            achievements='Co-organized the inaugural branch hackathon with 150+ participants.\nHelped grow the student chapter membership by 40%.\nRepresented the branch at IEEE Bangladesh Section events.',
+            order=0,
+        )
+
+        self.stdout.write('  [ok] Volunteering created (2 featured orgs)')
 
     def _seed_writeups(self):
         from apps.writeups.models import Writeup, WriteupTag

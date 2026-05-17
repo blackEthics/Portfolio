@@ -10,7 +10,8 @@ class VolunteeringRoleInline(admin.TabularInline):
 
 @admin.register(VolunteeringOrganization)
 class VolunteeringOrganizationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'location', 'total_duration', 'order')
-    list_editable = ('order',)
+    list_display = ('name', 'category', 'featured', 'location', 'total_duration', 'order')
+    list_editable = ('category', 'featured', 'order')
+    list_filter = ('category', 'featured')
     search_fields = ('name', 'location')
     inlines = [VolunteeringRoleInline]
