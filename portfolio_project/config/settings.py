@@ -128,3 +128,6 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+    # Trust Vercel's (and other reverse proxies') X-Forwarded-Proto header so
+    # Django knows the original request was HTTPS and won't redirect-loop.
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
