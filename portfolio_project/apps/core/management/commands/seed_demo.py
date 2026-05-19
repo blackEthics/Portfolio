@@ -21,30 +21,39 @@ class Command(BaseCommand):
         self._seed_education()
         self._seed_volunteering()
         self._seed_writeups()
+        self._seed_research()
         self.stdout.write(self.style.SUCCESS('Done! Demo data loaded.'))
 
     def _seed_profile(self):
         from apps.core.models import SiteProfile
-        if SiteProfile.objects.exists():
-            self.stdout.write('  [skip] SiteProfile already exists')
-            return
-        SiteProfile.objects.create(
-            name='[Your Name]',
+        defaults = dict(
+            name='Md Abu Saeed',
             hero_label="Hi, I'm a",
             title_roles='Vulnerability Assessment\nPenetration Tester\nCybersecurity Engineer',
             bio='Final-year CSE student specializing in offensive security, penetration testing, and quantum computing research. I break systems so defenders can build them stronger.',
-            profile_initials='YN',
-            github_url='https://github.com',
-            linkedin_url='https://linkedin.com',
-            tryhackme_url='https://tryhackme.com',
-            email='contact.youremail@gmail.com',
+            profile_initials='AS',
+            github_url='https://github.com/blackEthics',
+            linkedin_url='https://linkedin.com/in/md-abu-saeed',
+            tryhackme_url='https://tryhackme.com/p/blackEthics',
+            twitter_url='https://twitter.com/blackEthics',
+            facebook_url='https://facebook.com/blackEthics',
+            whatsapp_url='https://wa.me/8801800000000',
+            email='llmnotforeveryone@gmail.com',
             phone='+880 (000) 000-0000',
             location='Bangladesh, Dhaka',
             response_note='I typically respond to all inquiries within 24 hours.',
             footer_tagline='Stay curious. Stay ethical.',
             footer_location='Dhaka',
         )
-        self.stdout.write('  [ok] SiteProfile created')
+        profile = SiteProfile.objects.first()
+        if profile:
+            for k, v in defaults.items():
+                setattr(profile, k, v)
+            profile.save()
+            self.stdout.write('  [ok] SiteProfile updated')
+        else:
+            SiteProfile.objects.create(**defaults)
+            self.stdout.write('  [ok] SiteProfile created')
 
     def _seed_services(self):
         from apps.services.models import Service, ServiceTag
@@ -837,3 +846,89 @@ aws ec2 modify-instance-metadata-options \\
 
 This SSRF → AWS metadata → IAM credential exfiltration chain is one of the most impactful findings in cloud environments. Never allow server-side URL fetching without strict allowlist validation — especially in applications running on cloud infrastructure.
 """
+
+    def _seed_research(self):
+        from apps.research.models import ResearchPaper, ResearchTag
+        if ResearchPaper.objects.exists():
+            self.stdout.write('  [skip] Research papers already exist')
+            return
+        data = [
+            {
+                'title': 'Quantum-Resistant Cryptographic Protocols for IoT Edge Devices',
+                'authors': 'Md Abu Saeed, Dr. Rafiqul Islam, Nusrat Jahan',
+                'abstract': (
+                    'The proliferation of Internet of Things (IoT) devices has introduced significant '
+                    'cryptographic challenges, particularly in the context of quantum computing threats. '
+                    'This paper proposes a suite of lightweight, quantum-resistant cryptographic protocols '
+                    'optimized for resource-constrained edge devices. We evaluate CRYSTALS-Kyber and '
+                    'CRYSTALS-Dilithium adaptations against classical RSA and ECC baselines, demonstrating '
+                    'a 34% reduction in key-exchange latency with equivalent security margins on ARM Cortex-M4 '
+                    'microcontrollers. Our protocol stack achieves NIST PQC Level 3 security while maintaining '
+                    'under 8 KB RAM footprint, making it viable for constrained environments.'
+                ),
+                'short_description': (
+                    'Proposes lightweight post-quantum cryptographic protocols for IoT edge devices, '
+                    'achieving NIST PQC Level 3 security with under 8 KB RAM on ARM Cortex-M4.'
+                ),
+                'venue': 'IEEE Internet of Things Journal',
+                'published_at': datetime.date(2026, 3, 15),
+                'publication_url': 'https://ieeexplore.ieee.org',
+                'tags': [('Quantum Computing', 'purple'), ('Cryptography', 'blue'), ('IoT Security', 'green'), ('Post-Quantum', 'red')],
+                'is_featured': True,
+                'order': 0,
+            },
+            {
+                'title': 'Automated Vulnerability Discovery in Smart Contract Bytecode Using Symbolic Execution',
+                'authors': 'Md Abu Saeed, Tanzim Hossain',
+                'abstract': (
+                    'Smart contracts deployed on Ethereum and compatible blockchains are immutable once deployed, '
+                    'making pre-deployment security analysis critical. Existing static analysis tools miss up to '
+                    '41% of reentrancy vulnerabilities due to path explosion in symbolic execution engines. '
+                    'We present SCAVEX, a hybrid static-dynamic analysis framework combining constrained symbolic '
+                    'execution with fuzzing-guided path prioritization. Evaluated on 2,400 real-world contracts '
+                    'from Etherscan, SCAVEX achieves 94.2% true positive rate on reentrancy, integer overflow, '
+                    'and access-control vulnerabilities, outperforming Mythril, Slither, and Echidna in '
+                    'combined precision-recall metrics.'
+                ),
+                'short_description': (
+                    'SCAVEX: a hybrid analysis framework achieving 94.2% true positive rate on smart contract '
+                    'vulnerabilities, outperforming Mythril, Slither, and Echidna.'
+                ),
+                'venue': 'ACM CCS 2025 — Conference on Computer and Communications Security',
+                'published_at': datetime.date(2025, 11, 4),
+                'publication_url': 'https://dl.acm.org',
+                'tags': [('Blockchain', 'yellow'), ('Smart Contracts', 'blue'), ('Symbolic Execution', 'purple'), ('Fuzzing', 'red')],
+                'is_featured': True,
+                'order': 1,
+            },
+            {
+                'title': 'Side-Channel Resistance of AES-NI Implementations on Modern x86 Processors',
+                'authors': 'Md Abu Saeed, Prof. Shamim Akhter, Kamrul Hasan',
+                'abstract': (
+                    'Hardware AES-NI instructions are widely assumed to be immune to cache-timing side-channel '
+                    'attacks due to constant-time execution guarantees. This work challenges that assumption by '
+                    'demonstrating a cross-core L1 cache contention attack on AES-NI in hyper-threaded environments '
+                    'running Intel Xeon Scalable processors. We achieve full AES-128 key recovery in under 40 minutes '
+                    'using 2^22 observed encryptions from an unprivileged co-resident process. We further propose '
+                    'a microarchitectural mitigation using cache-partitioning via Intel CAT (Cache Allocation '
+                    'Technology) that eliminates the leakage channel with less than 2% throughput overhead.'
+                ),
+                'short_description': (
+                    'Demonstrates a cross-core cache contention attack on AES-NI achieving full key recovery, '
+                    'and proposes an Intel CAT mitigation with under 2% overhead.'
+                ),
+                'venue': 'USENIX Security 2025',
+                'published_at': datetime.date(2025, 8, 13),
+                'publication_url': 'https://usenix.org',
+                'tags': [('Side-Channel', 'red'), ('Cryptography', 'blue'), ('Hardware Security', 'gray'), ('AES', 'green')],
+                'is_featured': True,
+                'order': 2,
+            },
+        ]
+        for item in data:
+            tags = item.pop('tags')
+            paper = ResearchPaper.objects.create(**item)
+            for tag_name, color in tags:
+                tag, _ = ResearchTag.objects.get_or_create(name=tag_name, defaults={'color': color})
+                paper.tags.add(tag)
+        self.stdout.write('  [ok] Research papers created (3)')
