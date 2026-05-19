@@ -300,7 +300,7 @@ class Command(BaseCommand):
 
     def _create_writeup(self, title, tags, content, **kwargs):
         from apps.writeups.models import Writeup, WriteupTag
-        slug = slugify(title)
+        slug = slugify(title)[:50]
         kwargs['slug'] = slug
         kwargs['title'] = title
         kwargs['content'] = content
