@@ -42,3 +42,6 @@ htmlcov/
 
 # Node (if Tailwind CLI used later)
 node_modules/
+
+# Backup/archive folders (not part of deployment)
+Updated_Pre_Deployment_Portfolio/
