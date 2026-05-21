@@ -43,7 +43,7 @@
               />
               {% else %}
               <img
-                src="{% static 'images/Professional_Profile_Photo.png' %}"
+                src="{% static 'images/Professional-Profile-No-bg.png' %}"
                 alt="Md Abu Saeed"
                 class="nf-portrait"
               />
@@ -185,17 +185,6 @@
         before they are abused in the wild.
       </p>
     </div>
-    <div class="sk-terminal-strip fade-in" style="transition-delay: 0.05s">
-      <span class="sk-ts-prompt">visitor@portfolio</span
-      ><span class="sk-ts-sep">:</span><span class="sk-ts-path">~/services</span
-      ><span class="sk-ts-dollar">$&nbsp;</span
-      ><span class="sk-ts-cmd">list_services --format=grid</span>
-      <span class="sk-ts-divider">&nbsp;···&nbsp;</span>
-      <span class="sk-ts-ok">▸ {{ services|length }} services loaded</span>
-      <span class="sk-ts-divider">&nbsp;//&nbsp;</span>
-      <span class="sk-ts-ok">▸ status: <span class="sk-ts-hi">ACTIVE</span></span>
-    </div>
-
     <div class="services-grid">
       {% for service in services %}
       <div
@@ -237,7 +226,7 @@
 
     <!-- Terminal — full-width, shared header for both panels -->
     <div class="sk-terminal-strip fade-in" style="transition-delay: 0.03s">
-      <span class="sk-ts-prompt">visitor@portfolio</span
+      <span class="sk-ts-prompt">operator@portfolio</span
       ><span class="sk-ts-sep">:</span><span class="sk-ts-path">~/skills</span
       ><span class="sk-ts-dollar">$&nbsp;</span
       ><span class="sk-ts-cmd">load_matrix --all --radar</span>
@@ -272,13 +261,16 @@
             </svg>
           </div>
           <div class="sk-module-meta">
+            <div class="sk-module-id">
+              MODULE_{{ forloop.counter|stringformat:"02d" }}
+            </div>
             <div class="sk-module-name">{{ cat.label }}</div>
           </div>
           <div class="sk-module-count">{{ cat.skills.count }}</div>
         </div>
         <div class="sk-module-skills">
           {% for skill in cat.skills.all %}
-          <span class="pill {% cycle 'pill-green' 'pill-blue' 'pill-red' 'pill-yellow' 'pill-purple' %}">{{ skill.name }}</span>
+          <span class="sk-node">{{ skill.name }}</span>
           {% endfor %}
         </div>
         <div class="sk-module-footer">
@@ -327,7 +319,7 @@
         <div
           class="sk-matrix-nav-item"
           data-domain="lead"
-          data-label="Leadership &amp; Volunteering Matrix"
+          data-label="Leadership &amp; Volunteering"
         >
           <span class="sk-matrix-domain-name">Leadership</span>
         </div>
@@ -368,17 +360,6 @@
         offensive security and penetration testing.
       </p>
     </div>
-    <div class="sk-terminal-strip fade-in" style="transition-delay: 0.05s">
-      <span class="sk-ts-prompt">visitor@portfolio</span
-      ><span class="sk-ts-sep">:</span><span class="sk-ts-path">~/certs</span
-      ><span class="sk-ts-dollar">$&nbsp;</span
-      ><span class="sk-ts-cmd">verify_certs --all</span>
-      <span class="sk-ts-divider">&nbsp;···&nbsp;</span>
-      <span class="sk-ts-ok">▸ {{ certifications|length }} certifications</span>
-      <span class="sk-ts-divider">&nbsp;//&nbsp;</span>
-      <span class="sk-ts-ok">▸ status: <span class="sk-ts-hi">VERIFIED</span></span>
-    </div>
-
     {% if certifications %}
     <div class="cert-layout fade-in" style="transition-delay: 0.1s">
       <div class="cert-nav" id="cert-nav">
@@ -513,17 +494,6 @@
         identifying vulnerabilities.
       </p>
     </div>
-    <div class="sk-terminal-strip fade-in" style="transition-delay: 0.05s">
-      <span class="sk-ts-prompt">visitor@portfolio</span
-      ><span class="sk-ts-sep">:</span><span class="sk-ts-path">~/experience</span
-      ><span class="sk-ts-dollar">$&nbsp;</span
-      ><span class="sk-ts-cmd">cat timeline.log</span>
-      <span class="sk-ts-divider">&nbsp;···&nbsp;</span>
-      <span class="sk-ts-ok">▸ {{ experiences|length }} roles loaded</span>
-      <span class="sk-ts-divider">&nbsp;//&nbsp;</span>
-      <span class="sk-ts-ok">▸ status: <span class="sk-ts-hi">ACTIVE</span></span>
-    </div>
-
     <div class="exp-cards">
       {% for exp in experiences %}
       <div
@@ -545,7 +515,8 @@
         </div>
         <p class="exp-company">{{ exp.company }}</p>
         <p class="exp-meta">
-          {{ exp.period }} &nbsp;·&nbsp; {{ exp.location }} &nbsp;·&nbsp; {{ exp.get_work_mode_display_label }}
+          {{ exp.period }} &nbsp;·&nbsp; {{ exp.location }} &nbsp;·&nbsp; {{
+          exp.get_work_mode_display_label }}
         </p>
         <p class="exp-desc">{{ exp.description }}</p>
         {% if exp.achievements.exists %}
@@ -560,7 +531,7 @@
         {% endif %}
         <div class="tags-wrap">
           {% for tag in exp.tags.all %}
-          <span class="pill pill-{{ tag.color }}">{{ tag.name }}</span>
+          <span class="tag">{{ tag.name }}</span>
           {% endfor %}
         </div>
       </div>
@@ -587,17 +558,6 @@
         and research.
       </p>
     </div>
-    <div class="sk-terminal-strip fade-in" style="transition-delay: 0.05s">
-      <span class="sk-ts-prompt">visitor@portfolio</span
-      ><span class="sk-ts-sep">:</span><span class="sk-ts-path">~/education</span
-      ><span class="sk-ts-dollar">$&nbsp;</span
-      ><span class="sk-ts-cmd">cat degree.json</span>
-      <span class="sk-ts-divider">&nbsp;···&nbsp;</span>
-      <span class="sk-ts-ok">▸ {{ educations|length }} institutions</span>
-      <span class="sk-ts-divider">&nbsp;//&nbsp;</span>
-      <span class="sk-ts-ok">▸ status: <span class="sk-ts-hi">GRADUATED</span></span>
-    </div>
-
     <div class="edu-cards">
       {% for edu in educations %}
       <div
@@ -607,35 +567,15 @@
         <div class="edu-icon">{{ edu.icon_emoji }}</div>
         <div class="edu-info">
           <h3>{{ edu.degree }}</h3>
-          {% if edu.university_url %}
-          <a
-            href="{{ edu.university_url }}"
-            target="_blank"
-            rel="noopener"
-            class="edu-school edu-school-link"
-            title="Visit this University"
-          >{{ edu.school }}</a>
-          {% else %}
-          <p class="edu-school" title="Visit this University">{{ edu.school }}</p>
-          {% endif %}
-          {% if edu.location %}
-          <p class="edu-location">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-              <circle cx="12" cy="10" r="3"/>
-            </svg>
-            {{ edu.location }}
+          <p class="edu-school">{{ edu.school }}</p>
+          <p class="edu-meta">
+            {{ edu.period }}{% if edu.grade %} &nbsp;·&nbsp; {{ edu.grade }}{% endif %}
           </p>
-          {% endif %}
-          <p class="edu-meta">{{ edu.period }}</p>
-          {% if edu.tags.exists %}
-          <p class="edu-subjects-label">Major Subjects</p>
           <div class="tags-wrap">
             {% for tag in edu.tags.all %}
-            <span class="pill pill-{{ tag.color }}">{{ tag.name }}</span>
+            <span class="tag">{{ tag.name }}</span>
             {% endfor %}
           </div>
-          {% endif %}
         </div>
       </div>
       {% empty %}
@@ -662,19 +602,8 @@
       </p>
     </div>
 
-    <div class="sk-terminal-strip fade-in" style="transition-delay: 0.05s">
-      <span class="sk-ts-prompt">visitor@portfolio</span
-      ><span class="sk-ts-sep">:</span><span class="sk-ts-path">~/volunteering</span
-      ><span class="sk-ts-dollar">$&nbsp;</span
-      ><span class="sk-ts-cmd">list_orgs --featured --roles</span>
-      <span class="sk-ts-divider">&nbsp;···&nbsp;</span>
-      <span class="sk-ts-ok">▸ {{ total_vol_orgs }}+ organisations</span>
-      <span class="sk-ts-divider">&nbsp;//&nbsp;</span>
-      <span class="sk-ts-ok">▸ status: <span class="sk-ts-hi">CONTRIBUTING</span></span>
-    </div>
-
     <div class="vol-orgs">
-      {% for org in featured_vol_orgs %}
+      {% for org in volunteering_orgs %}
       <div
         class="vol-org-card fade-in"
         style="transition-delay:{{ forloop.counter0 }}05ms;"
@@ -691,25 +620,36 @@
             {% if org.total_duration %}
             <p class="vol-org-duration">
               <svg
-                width="12" height="12" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                style="flex-shrink: 0"
               >
-                <circle cx="12" cy="12" r="10"/>
-                <polyline points="12 6 12 12 16 14"/>
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
               </svg>
               {{ org.total_duration }}
             </p>
-            {% endif %}
-            {% if org.location %}
+            {% endif %} {% if org.location %}
             <p class="vol-org-location">
               <svg
-                width="12" height="12" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                style="flex-shrink: 0"
               >
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                <circle cx="12" cy="10" r="3"/>
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                <circle cx="12" cy="10" r="3" />
               </svg>
               {{ org.location }}
             </p>
@@ -723,7 +663,9 @@
           {% for role in org.roles.all %}
           <div class="vol-role">
             <div class="vol-role-dot-wrap">
-              <div class="vol-role-dot{% if role.is_current %} vol-dot-current{% endif %}">
+              <div
+                class="vol-role-dot{% if role.is_current %} vol-dot-current{% endif %}"
+              >
                 <div class="vol-dot-inner"></div>
               </div>
             </div>
@@ -736,10 +678,13 @@
               </div>
               <p class="vol-role-meta">{{ role.period }}</p>
               {% if role.description %}
-              <p class="vol-role-desc" id="vd-{{ role.pk }}">{{ role.description }}</p>
-              <button class="vol-show-more" data-target="vd-{{ role.pk }}">Show more ↓</button>
-              {% endif %}
-              {% if role.achievements %}
+              <p class="vol-role-desc" id="vd-{{ role.pk }}">
+                {{ role.description }}
+              </p>
+              <button class="vol-show-more" data-target="vd-{{ role.pk }}">
+                Show more ↓
+              </button>
+              {% endif %} {% if role.achievements %}
               <ul class="vol-role-achievements">
                 {% for ach in role.get_achievements_list %}
                 <li>{{ ach }}</li>
@@ -753,14 +698,10 @@
       </div>
       {% empty %}
       <p style="color: var(--muted); text-align: center">
-        No featured volunteering entries yet.
+        No volunteering entries added yet.
       </p>
       {% endfor %}
     </div>
-
-    <a href="{% url 'volunteering:list' %}" class="btn-view-all fade-in" style="margin-top: 1.75rem">
-      View all volunteering roles →
-    </a>
   </div>
 </section>
 
@@ -777,17 +718,6 @@
         Security tools, research projects, and open-source contributions —
         powered by GitHub.
       </p>
-    </div>
-
-    <div class="sk-terminal-strip fade-in" style="transition-delay: 0.05s">
-      <span class="sk-ts-prompt">visitor@portfolio</span
-      ><span class="sk-ts-sep">:</span><span class="sk-ts-path">~/projects</span
-      ><span class="sk-ts-dollar">$&nbsp;</span
-      ><span class="sk-ts-cmd">git log --oneline --all</span>
-      <span class="sk-ts-divider">&nbsp;···&nbsp;</span>
-      <span class="sk-ts-ok">▸ {{ home_projects|length }} repos featured</span>
-      <span class="sk-ts-divider">&nbsp;//&nbsp;</span>
-      <span class="sk-ts-ok">▸ status: <span class="sk-ts-hi">OPEN SOURCE</span></span>
     </div>
 
     {% if home_projects %}
@@ -873,17 +803,6 @@
         Peer-reviewed papers and academic contributions in cybersecurity and
         emerging technologies.
       </p>
-    </div>
-
-    <div class="sk-terminal-strip fade-in" style="transition-delay: 0.05s">
-      <span class="sk-ts-prompt">visitor@portfolio</span
-      ><span class="sk-ts-sep">:</span><span class="sk-ts-path">~/research</span
-      ><span class="sk-ts-dollar">$&nbsp;</span
-      ><span class="sk-ts-cmd">query_papers --all --peer-reviewed</span>
-      <span class="sk-ts-divider">&nbsp;···&nbsp;</span>
-      <span class="sk-ts-ok">▸ {{ research_papers|length }} publications</span>
-      <span class="sk-ts-divider">&nbsp;//&nbsp;</span>
-      <span class="sk-ts-ok">▸ status: <span class="sk-ts-hi">PUBLISHED</span></span>
     </div>
 
     {% if research_papers %}
@@ -1022,17 +941,6 @@
         offensive security engagements.
       </p>
     </div>
-    <div class="sk-terminal-strip fade-in" style="transition-delay: 0.05s">
-      <span class="sk-ts-prompt">visitor@portfolio</span
-      ><span class="sk-ts-sep">:</span><span class="sk-ts-path">~/writeups</span
-      ><span class="sk-ts-dollar">$&nbsp;</span
-      ><span class="sk-ts-cmd">ls -la --sort=date</span>
-      <span class="sk-ts-divider">&nbsp;···&nbsp;</span>
-      <span class="sk-ts-ok">▸ {{ featured_writeups|length }} featured writeups</span>
-      <span class="sk-ts-divider">&nbsp;//&nbsp;</span>
-      <span class="sk-ts-ok">▸ status: <span class="sk-ts-hi">LOADED</span></span>
-    </div>
-
     <div class="writeup-cards">
       {% for wu in featured_writeups %}
       <div
@@ -1092,29 +1000,15 @@
 ══════════════════════════════════ -->
 <section id="contact" style="padding: 5rem 0">
   <div class="contact-wrap">
-    <div class="section-head contact-head fade-in">
-      <h2>Get In <span>Touch</span></h2>
-      <p>Looking for a security professional who focuses on real-world testing? Let's talk.</p>
+    <div class="contact-head fade-in">
+      <h2>
+        Looking for a security professional who focuses on
+        <span>real-world testing</span>? Let's talk.
+      </h2>
     </div>
-    <div class="sk-terminal-strip fade-in" style="transition-delay: 0.05s; margin-bottom: 2rem;">
-      <span class="sk-ts-prompt">visitor@portfolio</span
-      ><span class="sk-ts-sep">:</span><span class="sk-ts-path">~/contact</span
-      ><span class="sk-ts-dollar">$&nbsp;</span
-      ><span class="sk-ts-cmd">init_handshake --secure --method=email</span>
-      <span class="sk-ts-divider">&nbsp;···&nbsp;</span>
-      <span class="sk-ts-ok">▸ PGP handshake ready</span>
-      <span class="sk-ts-divider">&nbsp;//&nbsp;</span>
-      <span class="sk-ts-ok">▸ status: <span class="sk-ts-hi">AVAILABLE</span></span>
-    </div>
-
     {% if form_success %}
     <div class="flash-message flash-success" id="form-success-banner">
       ✓ Message sent successfully. I'll get back to you within 24 hours.
-    </div>
-    {% endif %}
-    {% if form_errors %}
-    <div class="flash-message flash-error" id="form-error-banner">
-      {% for err in form_errors %}<p style="margin:0 0 0.25rem">✕ {{ err }}</p>{% endfor %}
     </div>
     {% endif %}
     <div class="contact-grid">
@@ -1405,7 +1299,7 @@
         t: "si",
         rows: [
           { k: "OS", v: "Kali Linux Rolling" },
-          { k: "Host", v: "Jagannath University" },
+          { k: "Host", v: "BRAC University — CSE Final Year" },
           { k: "Focus", v: "Offensive Security · Quantum Computing" },
           { k: "Shell", v: "bash · python3 · C" },
           { k: "Arenas", v: "TryHackMe · HackTheBox · CTF" },
@@ -1575,6 +1469,7 @@
       },
       { threshold: 0.5 },
     );
+
     document.querySelectorAll(".vol-role-dot").forEach(function (d) {
       dotObs.observe(d);
     });
@@ -1582,7 +1477,11 @@
     // ── Show-more / show-less description toggle ──
     document.querySelectorAll(".vol-show-more").forEach(function (btn) {
       var desc = document.getElementById(btn.dataset.target);
-      if (!desc) { btn.classList.add("vol-show-more-hidden"); return; }
+      if (!desc) {
+        btn.classList.add("vol-show-more-hidden");
+        return;
+      }
+      // Hide button when text fits within the clamp without overflow
       if (desc.scrollHeight <= desc.clientHeight + 2) {
         btn.classList.add("vol-show-more-hidden");
         return;
@@ -1874,7 +1773,7 @@
         label: "Cybersecurity Skill Matrix",
         axes: [
           { label: "Network Security",        value: 9 },
-          { label: ">_ Penetration Testing",   value: 8 },
+          { label: "Penetration Testing",     value: 8 },
           { label: "Cryptography",            value: 7 },
           { label: "Malware Analysis",        value: 6 },
           { label: "Linux Administration",    value: 8 },
@@ -1915,7 +1814,7 @@
         ]
       },
       lead: {
-        label: "Leadership & Volunteering Matrix",
+        label: "Leadership & Volunteering",
         axes: [
           { label: "Communication",    value: 9 },
           { label: "Team Management",  value: 8 },
